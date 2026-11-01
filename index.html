@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>فانتزي شرم الشيخ</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fa;--sf:#fff;--tx:#111827;--mu:#6b7280;--ac:#0e9f6e;--bd:#e5e7eb;--dn:#ef4444;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--sf:#151e30;--tx:#f3f4f6;--mu:#9ca3af;--ac:#34d399;--bd:#26324a}}
+:root[data-theme="dark"]{--bg:#0b1220;--sf:#151e30;--tx:#f3f4f6;--mu:#9ca3af;--ac:#34d399;--bd:#26324a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,sans-serif;padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+header{padding:14px 16px;font-weight:900;font-size:20px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header small{font-size:12px;color:var(--mu);font-weight:400}
+main{padding:0 12px 12px;max-width:560px;margin:auto}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--bd);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
+nav button{flex:1;border:0;background:none;color:var(--mu);font:700 12px Cairo,sans-serif;padding:12px 0}
+nav button.on{color:var(--ac)}
+.bar{display:flex;gap:8px;margin-bottom:10px}
+.bar div{flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:8px;text-align:center;font-size:12px;color:var(--mu)}
+.bar b{display:block;font-size:17px;color:var(--tx)}
+.pitch{background:linear-gradient(#1f8f4e,#177a41);border-radius:16px;padding:12px 4px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.bench{margin-top:10px;background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:10px 4px}
+.bench h4{margin:0 0 8px 8px;font-size:12px;color:var(--mu)}
+.card{position:relative;width:128px;height:178px;border-radius:14px 14px 40px 40px;padding:10px;color:#2b1d00;text-align:center;box-shadow:0 4px 14px #0004;direction:ltr;font-family:Cairo,sans-serif}
+.g{background:linear-gradient(145deg,#f8e08e,#d4a72c 60%,#f3d36b)}
+.s{background:linear-gradient(145deg,#f1f5f9,#a8b3c2 60%,#e2e8f0);color:#1e293b}
+.b{background:linear-gradient(145deg,#e7b98a,#a8683a 60%,#d9a06c);color:#3a1c05}
+.card .ovr{position:absolute;left:12px;top:10px;font-size:28px;font-weight:900;line-height:1}
+.card .ps{position:absolute;left:12px;top:40px;font-size:11px;font-weight:700}
+.card .av{width:62px;height:62px;border-radius:50%;margin:2px 0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:20px;border:3px solid #fff8;overflow:hidden}
+.card .nm{font-weight:900;font-size:13px;margin-top:8px;border-bottom:1px solid #0003;padding-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .st{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 4px;font-size:10px;margin-top:5px;font-weight:700}
+.card .cl{font-size:9px;margin-top:4px;opacity:.8}
+.card.sm{width:76px;height:106px;padding:5px;border-radius:10px 10px 24px 24px;cursor:pointer}
+.sm .ovr{font-size:16px;left:6px;top:5px}.sm .ps{font-size:8px;left:6px;top:22px}
+.sm .av{width:34px;height:34px;font-size:12px;border-width:2px}
+.sm .nm{font-size:9px;margin-top:4px}.sm .st,.sm .cl{display:none}
+.sm .pt{display:block}.pt{display:none;font-size:11px;font-weight:900;margin-top:2px}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.cap{position:absolute;right:-4px;top:-4px;background:#111;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;line-height:20px;font-weight:900}
+.empty{width:76px;height:106px;border:2px dashed #fff8;border-radius:12px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;background:none;font-family:Cairo}
+.filters{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto}
+.filters button,.btn{border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:20px;padding:6px 14px;font:700 13px Cairo,sans-serif;white-space:nowrap;cursor:pointer}
+.filters button.on,.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn.dn{background:var(--dn);color:#fff;border-color:var(--dn)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input.q,select.q,textarea.q{width:100%;padding:10px;border-radius:12px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:14px Cairo,sans-serif;margin-bottom:8px}
+.li{display:flex;align-items:center;gap:10px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin-bottom:6px}
+.li .o{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#2b1d00;flex-shrink:0}
+.li .i{flex:1;min-width:0}.li .i b{display:block;font-size:14px}.li .i span{font-size:11px;color:var(--mu)}
+.li .p{font-weight:900;font-size:14px}
+.add{border:0;background:var(--ac);color:#fff;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;flex-shrink:0}
+.add.x{background:#ef4444}
+#m{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:20;padding:16px;overflow:auto}
+#m.on{display:flex}
+#m .card{transform:scale(1.2);margin:20px 0}
+.tg{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;z-index:30;display:none;max-width:90%;text-align:center}
+.rules li{margin-bottom:6px;font-size:14px}.rules h3{margin:14px 0 6px}
+table{width:100%;border-collapse:collapse;background:var(--sf);border-radius:12px;overflow:hidden}
+td{padding:10px;border-bottom:1px solid var(--bd);font-size:14px}.me{background:#0e9f6e22;font-weight:900}
+.note{font-size:11px;color:var(--mu);text-align:center;margin-top:10px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.badge.ok{background:#d1fae5;color:#065f46}.badge.wait{background:#fef3c7;color:#92400e}.badge.no{background:#fee2e2;color:#991b1b}
+.admin-box{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:10px}
+.admin-box h3{margin:0 0 8px;font-size:15px}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.locked{opacity:.7;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <span>⚽ فانتزي شرم الشيخ</span>
+  <small id="gw">...</small>
+</header>
+<main id="v"></main>
+<nav id="nv"></nav>
+<div id="m"></div><div class="tg" id="tg"></div>
+<script>
+const CFG = window.SF_CONFIG || {};
+const SB_URL = CFG.SUPABASE_URL || "";
+const SB_KEY = CFG.SUPABASE_ANON_KEY || "";
+const CL = [
+  ["نجوم الخليج","#e63946"],["أسود نعمة","#f4a261"],["صقور الهضبة","#2a9d8f"],["رأس محمد","#457b9d"],
+  ["القرش الأزرق","#6d28d9"],["شروم يونايتد","#0f766e"],["نبق سبورت","#be185d"],["الوادي","#4d7c0f"]
+];
+const POS = {G:["حراس","GK"],D:["مدافعين","DEF"],M:["وسط","MID"],F:["مهاجمين","FWD"]};
+const NEED = {G:2,D:5,M:5,F:3}, START = {G:1,D:4,M:4,F:2};
+const LB = {G:["DIV","HAN","KIC","REF","SPD","POS"],o:["PAC","SHO","PAS","DRI","DEF","PHY"]};
+
+let P = [];           // approved players for market/team
+let ALL = [];         // admin: all players
+let S = {sq:[], cap:null, team_name:"فريقي", total_points:0};
+let SETTINGS = {gameweek:1, gameweek_label:"الجولة 1", transfers_locked:false};
+let BOARD = [];
+let tab = "team", flt = "ALL", qs = "", adminFlt = "pending";
+let sb = null, U = null, ME = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => "&#" + c.charCodeAt(0) + ";");
+const tier = r => r >= 75 ? "g" : r >= 65 ? "s" : "b";
+const byId = id => P.find(p => p.id === id) || ALL.find(p => p.id === id);
+const priceOf = p => Math.max(4, Math.round((4 + (p.rt - 58) * .25 + ({G:-.5,D:0,M:1,F:1.5}[p.p] || 0)) * 2) / 2);
+const spent = () => S.sq.reduce((a, id) => a + (byId(id) ? priceOf(byId(id)) : 0), 0);
+const isAdmin = () => !!(ME && ME.is_admin);
+const locked = () => !!SETTINGS.transfers_locked && !isAdmin();
+
+function toast(t) {
+  const e = $("tg");
+  e.textContent = t;
+  e.style.display = "block";
+  setTimeout(() => e.style.display = "none", 2200);
+}
+
+function mapPlayer(d) {
+  const pos = POS[d.pos] ? d.pos : "M";
+  const rt = Math.min(99, Math.max(40, +d.rating || 60));
+  const h = [...String(d.id)].reduce((a, c) => a + c.charCodeAt(0), 0);
+  return {
+    id: d.id,
+    uid: d.user_id,
+    name: d.name,
+    age: +d.age || 0,
+    p: pos,
+    ci: Math.min(Math.max(+d.club_id || 0, 0), CL.length - 1),
+    rt,
+    pr: Math.max(4, Math.round((4 + (rt - 58) * .25 + ({G:-.5,D:0,M:1,F:1.5}[pos] || 0)) * 2) / 2),
+    st: [0,1,2,3,4,5].map(k => Math.min(95, Math.max(35, rt + ((h >> k) % 17) - 8))),
+    pts: +d.points || 0,
+    ph: d.photo_url || null,
+    approved: !!d.approved,
+    is_admin: !!d.is_admin
+  };
+}
+
+function card(p, sm) {
+  const c = CL[p.ci], L = LB[p.p === "G" ? "G" : "o"];
+  return `<div class="card ${tier(p.rt)} ${sm ? "sm" : ""}" ${sm ? `onclick="openP('${p.id}')"` : ""}>
+    ${S.cap === p.id ? '<div class="cap">C</div>' : ""}
+    <div class="ovr">${p.rt}</div><div class="ps">${POS[p.p][1]}</div>
+    <div class="av" style="background:${c[1]}">${p.ph ? `<img src="${esc(p.ph)}" alt="">` : esc(p.name.trim().slice(0, 2))}</div>
+    <div class="nm">${esc(p.name)}</div>
+    <div class="st">${p.st.map((v, i) => `<span>${v} ${L[i]}</span>`).join("")}</div>
+    <div class="cl">${esc(c[0])}${p.age ? " · " + p.age + " سنة" : ""} · £${p.pr}M</div>
+    ${sm ? `<div class="pt">${p.pts * (S.cap === p.id ? 2 : 1)} نقطة</div>` : ""}
+  </div>`;
+}
+
+function starters() {
+  const o = [], b = [];
+  Object.keys(NEED).forEach(k => {
+    S.sq.filter(id => byId(id)?.p === k).forEach((id, j) => (j < START[k] ? o : b).push(id));
+  });
+  return [o, b];
+}
+
+function total() {
+  const [o] = starters();
+  return o.reduce((a, id) => a + (byId(id)?.pts || 0), 0) + (o.includes(S.cap) ? (byId(S.cap)?.pts || 0) : 0);
+}
+
+function slot(k, id) {
+  return id != null && byId(id) ? card(byId(id), true) : `<button class="empty" onclick="go('${k}')">+ ${POS[k][1]}</button>`;
+}
+
+function team() {
+  if (!U) return needAuth();
+  const inS = k => S.sq.filter(id => byId(id)?.p === k);
+  const row = k => {
+    const a = inS(k).slice(0, START[k]);
+    let h = "";
+    for (let j = 0; j < START[k]; j++) h += slot(k, a[j]);
+    return `<div class="row">${h}</div>`;
+  };
+  let bh = "";
+  Object.keys(NEED).forEach(k => {
+    const a = inS(k).slice(START[k]);
+    for (let j = 0; j < NEED[k] - START[k]; j++) bh += slot(k, a[j]);
+  });
+  return `<div class="bar">
+      <div>الميزانية<b>£${(100 - spent()).toFixed(1)}M</b></div>
+      <div>اللاعبين<b>${S.sq.length}/15</b></div>
+      <div>نقاط الجولة<b>${total()}</b></div>
+    </div>
+    ${SETTINGS.transfers_locked ? `<p class="note">🔒 التحويلات مقفولة حاليًا</p>` : ""}
+    <div class="pitch ${locked() ? "locked" : ""}">${row("F")}${row("M")}${row("D")}${row("G")}</div>
+    <div class="bench"><h4>دكة البدلاء</h4><div class="row">${bh}</div></div>
+    <input class="q" id="tn" placeholder="اسم الفريق" value="${esc(S.team_name)}" onchange="S.team_name=this.value;saveSquad()">
+    <button class="btn pri" style="width:100%;margin-top:6px" onclick="saveSquad(true)">حفظ الفريق</button>
+    <p class="note">اضغط على لاعب → كابتن أو حذف. اللاعيبة = حسابات حقيقية معتمدة.</p>`;
+}
+
+function market() {
+  if (!U) return needAuth();
+  const l = P.filter(p => (flt === "ALL" || p.p === flt) && p.name.includes(qs)).sort((a, b) => b.rt - a.rt);
+  return `<input class="q" placeholder="ابحث عن لاعب..." value="${esc(qs)}" oninput="qs=this.value;mk(true)">
+    <div class="filters">${["ALL", ...Object.keys(POS)].map(k =>
+      `<button class="${flt === k ? "on" : ""}" onclick="flt='${k}';mk()">${k === "ALL" ? "الكل" : POS[k][0]}</button>`
+    ).join("")}</div>
+    <div id="ls">${list(l)}</div>
+    ${!l.length ? `<p class="note">مفيش لاعيبة معتمدين غير الـ 5 ديمو لسه — الناس هتسجل والأدمن يعتمدهم.</p>` : ""}`;
+}
+
+function list(l) {
+  return l.map(p => {
+    const h = S.sq.includes(p.id);
+    return `<div class="li">
+      <div class="o" style="background:${{g:"#e8c24f",s:"#b9c3d0",b:"#c98d5c"}[tier(p.rt)]}">${p.rt}</div>
+      <div class="i" onclick="big('${p.id}')"><b>${esc(p.name)}</b>
+        <span>${esc(CL[p.ci][0])} · ${POS[p.p][1]} · آخر جولة ${p.pts}</span></div>
+      <div class="p">£${p.pr}M</div>
+      <button class="add ${h ? "x" : ""}" onclick="${h ? `rm('${p.id}')` : `add('${p.id}')`}">${h ? "−" : "+"}</button>
+    </div>`;
+  }).join("");
+}
+
+function mk(only) {
+  if (only) {
+    const l = P.filter(p => (flt === "ALL" || p.p === flt) && p.name.includes(qs)).sort((a, b) => b.rt - a.rt);
+    const el = $("ls"); if (el) el.innerHTML = list(l);
+  } else draw();
+}
+
+async function add(id) {
+  if (locked()) return toast("التحويلات مقفولة");
+  const p = byId(id); if (!p) return;
+  if (S.sq.length >= 15) return toast("الفريق كامل (15 لاعب)");
+  if (S.sq.filter(x => byId(x)?.p === p.p).length >= NEED[p.p]) return toast("مفيش مكان تاني في المركز ده");
+  if (S.sq.filter(x => byId(x)?.ci === p.ci).length >= 3) return toast("الحد الأقصى 3 لاعبين من نفس النادي");
+  if (spent() + p.pr > 100) return toast("الميزانية مش كفاية");
+  S.sq.push(id);
+  await saveSquad();
+  draw();
+}
+
+async function rm(id) {
+  if (locked()) return toast("التحويلات مقفولة");
+  S.sq = S.sq.filter(x => x !== id);
+  if (S.cap === id) S.cap = null;
+  $("m").classList.remove("on");
+  await saveSquad();
+  draw();
+}
+
+function big(id) {
+  const p = byId(id); if (!p) return;
+  $("m").innerHTML = card(p, false) + `<div><button class="btn" onclick="$('m').classList.remove('on')">إغلاق</button></div>`;
+  $("m").classList.add("on");
+}
+
+function openP(id) {
+  const p = byId(id); if (!p) return;
+  $("m").innerHTML = card(p, false) + `<div class="row-actions" style="justify-content:center">
+    <button class="btn pri" onclick="setCap('${id}')">👑 كابتن</button>
+    <button class="btn dn" onclick="rm('${id}')">حذف</button>
+    <button class="btn" onclick="$('m').classList.remove('on')">إغلاق</button>
+  </div>`;
+  $("m").classList.add("on");
+}
+
+async function setCap(id) {
+  if (locked()) return toast("التحويلات مقفولة");
+  S.cap = id;
+  $("m").classList.remove("on");
+  await saveSquad();
+  draw();
+}
+
+function go(k) { flt = k; tab = "mk"; draw(); }
+
+function board() {
+  if (!U) return needAuth();
+  if (!BOARD.length) return `<p class="note">لسه مفيش فرق محفوظة.</p>`;
+  return `<table>${BOARD.map((r, i) =>
+    `<tr class="${r.user_id === U?.id ? "me" : ""}"><td>${i + 1}</td><td>${esc(r.team_name)}</td><td>${r.total_points} نقطة</td></tr>`
+  ).join("")}</table>
+  <p class="note">الترتيب من الفرق المحفوظة — الأدمن يحدّث نقاط اللاعيبة بعد كل جولة.</p>`;
+}
+
+function rules() {
+  return `<div class="rules">
+    <h3>تكوين الفريق</h3>
+    <ul>
+      <li>15 لاعب: 2 حراس، 5 مدافعين، 5 وسط، 3 مهاجمين</li>
+      <li>ميزانية £100M</li>
+      <li>بحد أقصى 3 لاعبين من نفس النادي</li>
+      <li>11 أساسي (4-4-2) و4 بدلاء، والكابتن نقاطه ×2</li>
+      <li>اللاعيبة = ناس حقيقية بتسجل والأدمن يعتمدهم</li>
+    </ul>
+    <h3>النقاط</h3>
+    <ul>
+      <li>اللعب أقل من 60 دقيقة: 1 · أكتر: 2</li>
+      <li>هدف: مهاجم 4 · وسط 5 · مدافع/حارس 6</li>
+      <li>تمريرة حاسمة: 3</li>
+      <li>شباك نضيفة: حارس/مدافع 4 · وسط 1</li>
+      <li>كل 3 تصديات للحارس: 1 · إنقاذ ضربة جزاء: 5</li>
+      <li>ضربة جزاء ضايعة: −2 · هدف عكسي: −2</li>
+      <li>كارت أصفر: −1 · أحمر: −3</li>
+      <li>نقاط البونص: 1 إلى 3 لأفضل 3 لاعبين في المباراة</li>
+    </ul>
+  </div>`;
+}
+
+function needAuth() {
+  return `<p class="note" style="font-size:14px;margin-top:40px">سجّل دخول من تبويب <b>حسابي</b> عشان تستخدم التطبيق.</p>`;
+}
+
+function me() {
+  if (!sb) return `<p class="note">حط بيانات Supabase في ملف config.js (انسخ من config.example.js).</p>`;
+  if (!U) {
+    return `<input class="q" id="em" type="email" placeholder="الإيميل" autocomplete="email">
+      <input class="q" id="pw" type="password" placeholder="كلمة السر (6 حروف على الأقل)" autocomplete="current-password">
+      <button class="btn pri" onclick="auth(1)">دخول</button>
+      <button class="btn" onclick="auth(0)">حساب جديد</button>
+      <p class="note">بعد التسجيل: كمّل بياناتك كلاعب → الأدمن يعتمدك → تظهر في السوق.</p>`;
+  }
+  const m = ME || {};
+  const status = !ME ? "لسه محفوظتش" : m.approved ? "معتمد ✅" : "قيد المراجعة";
+  return `<div class="bar">
+      <div>الحالة<b>${status}</b></div>
+      <div>التقييم<b>${m.rating || "-"}</b></div>
+      ${m.is_admin ? `<div>الصلاحية<b>أدمن</b></div>` : ""}
+    </div>
+    <input class="q" id="nm" placeholder="الاسم" value="${esc(m.name || "")}">
+    <input class="q" id="ag" type="number" min="10" max="60" placeholder="السن" value="${esc(m.age || "")}">
+    <select class="q" id="ps">${Object.keys(POS).map(k =>
+      `<option value="${k}" ${m.pos === k ? "selected" : ""}>${POS[k][0]}</option>`).join("")}</select>
+    <select class="q" id="cb">${CL.map((c, i) =>
+      `<option value="${i}" ${+m.club_id === i ? "selected" : ""}>${c[0]}</option>`).join("")}</select>
+    <input class="q" id="ph" type="file" accept="image/*">
+    <button class="btn pri" onclick="saveMe()">حفظ بياناتي كلاعب</button>
+    <button class="btn" onclick="signOut()">خروج</button>
+    <p class="note">التقييم والاعتماد بيحددهم الأدمن. الإيميل: ${esc(U.email || "")}</p>`;
+}
+
+/* ================= ADMIN ================= */
+function admin() {
+  if (!isAdmin()) return `<p class="note">الصفحة دي للأدمن فقط.</p>`;
+  const list = adminFlt === "all" ? ALL
+    : adminFlt === "pending" ? ALL.filter(p => !p.approved && p.uid)
+    : adminFlt === "approved" ? ALL.filter(p => p.approved)
+    : ALL.filter(p => p.is_admin);
+
+  return `
+    <div class="admin-box">
+      <h3>إعدادات الجولة</h3>
+      <input class="q" id="gl" value="${esc(SETTINGS.gameweek_label)}" placeholder="اسم الجولة">
+      <input class="q" id="gn" type="number" min="1" value="${SETTINGS.gameweek}" placeholder="رقم الجولة">
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:14px">
+        <input type="checkbox" id="lk" ${SETTINGS.transfers_locked ? "checked" : ""}> قفل التحويلات
+      </label>
+      <button class="btn pri" onclick="saveSettings()">حفظ الإعدادات</button>
+      <button class="btn" onclick="recalcBoard()">إعادة حساب نقاط الفرق</button>
+    </div>
+
+    <div class="admin-box">
+      <h3>إدارة اللاعيبة (${list.length})</h3>
+      <div class="filters">
+        ${[["pending","قيد المراجعة"],["approved","معتمد"],["all","الكل"],["admins","أدمن"]].map(([k,l]) =>
+          `<button class="${adminFlt===k?"on":""}" onclick="adminFlt='${k}';draw()">${l}</button>`).join("")}
+      </div>
+      ${list.map(adminRow).join("") || `<p class="note">مفيش نتائج.</p>`}
+    </div>
+
+    <div class="admin-box">
+      <h3>كل الفرق</h3>
+      ${BOARD.map(r => `<div class="li"><div class="i"><b>${esc(r.team_name)}</b><span>${r.player_ids?.length||0} لاعب · ${r.total_points} نقطة</span></div></div>`).join("") || `<p class="note">مفيش فرق.</p>`}
+    </div>
+    <p class="note">أدمن = full access: اعتماد، تقييم، نقاط، حذف، قفل الجولة، ترتيب.</p>`;
+}
+
+function adminRow(p) {
+  const st = p.is_admin ? '<span class="badge ok">أدمن</span>'
+    : p.approved ? '<span class="badge ok">معتمد</span>'
+    : p.uid ? '<span class="badge wait">مراجعة</span>'
+    : '<span class="badge no">ديمو</span>';
+  return `<div class="li" style="flex-wrap:wrap">
+    <div class="o" style="background:${{g:"#e8c24f",s:"#b9c3d0",b:"#c98d5c"}[tier(p.rt)]}">${p.rt}</div>
+    <div class="i"><b>${esc(p.name)} ${st}</b>
+      <span>${esc(CL[p.ci][0])} · ${POS[p.p][1]} · ${p.age||"-"} سنة · نقاط ${p.pts}</span>
+    </div>
+    <div class="row-actions" style="width:100%">
+      <input class="q" style="width:70px;margin:0" id="rt_${p.id}" type="number" min="40" max="99" value="${p.rt}" title="تقييم">
+      <input class="q" style="width:70px;margin:0" id="pt_${p.id}" type="number" value="${p.pts}" title="نقاط">
+      <select class="q" style="width:90px;margin:0" id="ps_${p.id}">${Object.keys(POS).map(k=>`<option value="${k}" ${p.p===k?"selected":""}>${POS[k][1]}</option>`).join("")}</select>
+      <button class="btn pri" onclick="adminSave('${p.id}')">حفظ</button>
+      ${!p.approved ? `<button class="btn pri" onclick="adminApprove('${p.id}',true)">اعتماد</button>` : `<button class="btn" onclick="adminApprove('${p.id}',false)">إلغاء اعتماد</button>`}
+      ${p.uid && !p.is_admin ? `<button class="btn" onclick="adminMakeAdmin('${p.id}')">ترقية أدمن</button>` : ""}
+      <button class="btn dn" onclick="adminDelete('${p.id}')">حذف</button>
+    </div>
+  </div>`;
+}
+
+async function adminSave(id) {
+  const rating = +$("rt_" + id).value, points = +$("pt_" + id).value, pos = $("ps_" + id).value;
+  const {error} = await sb.from("players").update({rating, points, pos, updated_at: new Date().toISOString()}).eq("id", id);
+  if (error) return toast(error.message);
+  toast("تم الحفظ");
+  await refreshAll(); draw();
+}
+
+async function adminApprove(id, approved) {
+  const {error} = await sb.from("players").update({approved, updated_at: new Date().toISOString()}).eq("id", id);
+  if (error) return toast(error.message);
+  toast(approved ? "تم الاعتماد" : "اتشال الاعتماد");
+  await refreshAll(); draw();
+}
+
+async function adminMakeAdmin(id) {
+  if (!confirm("ترقية الحساب ده لأدمن؟")) return;
+  const {error} = await sb.from("players").update({is_admin: true, approved: true}).eq("id", id);
+  if (error) return toast(error.message);
+  toast("بقى أدمن");
+  await refreshAll(); draw();
+}
+
+async function adminDelete(id) {
+  if (!confirm("حذف اللاعب نهائي؟")) return;
+  const {error} = await sb.from("players").delete().eq("id", id);
+  if (error) return toast(error.message);
+  S.sq = S.sq.filter(x => x !== id);
+  if (S.cap === id) S.cap = null;
+  toast("اتحذف");
+  await refreshAll(); draw();
+}
+
+async function saveSettings() {
+  const gameweek_label = $("gl").value.trim() || "الجولة 1";
+  const gameweek = +$("gn").value || 1;
+  const transfers_locked = $("lk").checked;
+  const {error} = await sb.from("app_settings").update({gameweek_label, gameweek, transfers_locked, updated_at: new Date().toISOString()}).eq("id", 1);
+  if (error) return toast(error.message);
+  SETTINGS = {gameweek, gameweek_label, transfers_locked};
+  $("gw").textContent = gameweek_label;
+  toast("اتحفظت الإعدادات");
+}
+
+async function recalcBoard() {
+  const {data: squads, error} = await sb.from("squads").select("*");
+  if (error) return toast(error.message);
+  for (const sq of (squads || [])) {
+    const ids = sq.player_ids || [];
+    const startersIds = [];
+    Object.keys(NEED).forEach(k => {
+      ids.filter(id => byId(id)?.p === k).forEach((id, j) => { if (j < START[k]) startersIds.push(id); });
+    });
+    let pts = startersIds.reduce((a, id) => a + (byId(id)?.pts || 0), 0);
+    if (sq.captain_id && startersIds.includes(sq.captain_id)) pts += byId(sq.captain_id)?.pts || 0;
+    await sb.from("squads").update({total_points: pts, updated_at: new Date().toISOString()}).eq("user_id", sq.user_id);
+  }
+  toast("اتحسبت نقاط كل الفرق");
+  await loadBoard(); draw();
+}
+
+/* ================= DATA / AUTH ================= */
+async function auth(login) {
+  const e = $("em").value.trim(), p = $("pw").value;
+  if (!e || p.length < 6) return toast("اكتب إيميل وكلمة سر صحيحة");
+  const r = login
+    ? await sb.auth.signInWithPassword({email: e, password: p})
+    : await sb.auth.signUp({email: e, password: p});
+  if (r.error) return toast(r.error.message);
+  if (!login && !r.data.session) toast("لو فيه تأكيد إيميل، افتح اللينك وبعدين ادخل");
+  else toast(login ? "أهلاً بيك" : "تم إنشاء الحساب");
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  U = null; ME = null; S = {sq:[], cap:null, team_name:"فريقي", total_points:0};
+  tab = "me"; draw();
+}
+
+function rs(f, n) {
+  return new Promise(ok => {
+    const im = new Image();
+    im.onload = () => {
+      const s = Math.min(im.width, im.height), c = document.createElement("canvas");
+      c.width = c.height = n;
+      c.getContext("2d").drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, n, n);
+      c.toBlob(ok, "image/jpeg", .85);
+    };
+    im.src = URL.createObjectURL(f);
+  });
+}
+
+async function saveMe() {
+  const nm = $("nm").value.trim().slice(0, 30), ag = +$("ag").value;
+  if (!nm || ag < 10 || ag > 60) return toast("اكتب الاسم والسن صح");
+  let url = ME ? ME.photo_url : null;
+  const f = $("ph").files[0];
+  if (f) {
+    const b = await rs(f, 300), pa = U.id + "/avatar.jpg";
+    const u = await sb.storage.from("avatars").upload(pa, b, {upsert: true, contentType: "image/jpeg"});
+    if (u.error) return toast(u.error.message);
+    url = sb.storage.from("avatars").getPublicUrl(pa).data.publicUrl + "?v=" + Date.now();
+  }
+  const row = {
+    user_id: U.id,
+    name: nm,
+    age: ag,
+    pos: $("ps").value,
+    club_id: +$("cb").value,
+    photo_url: url,
+    updated_at: new Date().toISOString()
+  };
+  // keep approval/rating if exists; new players start unapproved
+  let q;
+  if (ME?.id) q = await sb.from("players").update(row).eq("id", ME.id).select().maybeSingle();
+  else q = await sb.from("players").insert({...row, approved: false, rating: 60, points: 0}).select().maybeSingle();
+  if (q.error) return toast(q.error.message);
+  toast(ME?.approved ? "اتحفظ" : "اتحفظ — في انتظار اعتماد الأدمن");
+  await loadMe(); draw();
+}
+
+async function saveSquad(showToast) {
+  if (!sb || !U) return;
+  const payload = {
+    user_id: U.id,
+    team_name: (S.team_name || "فريقي").slice(0, 40),
+    player_ids: S.sq,
+    captain_id: S.cap,
+    total_points: total(),
+    updated_at: new Date().toISOString()
+  };
+  const {error} = await sb.from("squads").upsert(payload);
+  if (error) toast(error.message);
+  else if (showToast) toast("الفريق اتسجل");
+  await loadBoard();
+}
+
+async function loadPlayers() {
+  const {data, error} = await sb.from("players").select("*").eq("approved", true).order("rating", {ascending: false});
+  if (error) { toast(error.message); return; }
+  P = (data || []).map(mapPlayer);
+  S.sq = S.sq.filter(id => P.some(p => p.id === id));
+  if (S.cap && !P.some(p => p.id === S.cap)) S.cap = null;
+}
+
+async function loadAllPlayers() {
+  if (!isAdmin()) { ALL = []; return; }
+  const {data, error} = await sb.from("players").select("*").order("created_at", {ascending: false});
+  if (error) { toast(error.message); return; }
+  ALL = (data || []).map(mapPlayer);
+}
+
+async function loadMe() {
+  ME = null;
+  if (!sb || !U) return;
+  const {data} = await sb.from("players").select("*").eq("user_id", U.id).maybeSingle();
+  ME = data;
+}
+
+async function loadSquad() {
+  if (!sb || !U) return;
+  const {data} = await sb.from("squads").select("*").eq("user_id", U.id).maybeSingle();
+  if (!data) return;
+  S = {
+    sq: data.player_ids || [],
+    cap: data.captain_id || null,
+    team_name: data.team_name || "فريقي",
+    total_points: data.total_points || 0
+  };
+}
+
+async function loadBoard() {
+  const {data} = await sb.from("squads").select("user_id,team_name,total_points,player_ids").order("total_points", {ascending: false});
+  BOARD = data || [];
+}
+
+async function loadSettings() {
+  const {data} = await sb.from("app_settings").select("*").eq("id", 1).maybeSingle();
+  if (data) SETTINGS = data;
+  $("gw").textContent = SETTINGS.gameweek_label || ("الجولة " + SETTINGS.gameweek);
+}
+
+async function refreshAll() {
+  await loadSettings();
+  await loadMe();
+  await loadPlayers();
+  await loadAllPlayers();
+  await loadSquad();
+  await loadBoard();
+}
+
+function draw() {
+  const tabs = [
+    ["team", "فريقي"],
+    ["mk", "السوق"],
+    ["lb", "الترتيب"],
+    ["me", "حسابي"],
+    ["rl", "القواعد"]
+  ];
+  if (isAdmin()) tabs.push(["ad", "أدمن"]);
+  $("nv").innerHTML = tabs.map(x =>
+    `<button class="${tab === x[0] ? "on" : ""}" onclick="tab='${x[0]}';draw()">${x[1]}</button>`
+  ).join("");
+  const views = {team, mk: market, lb: board, rl: rules, me, ad: admin};
+  $("v").innerHTML = (views[tab] || team)();
+}
+
+async function init() {
+  if (!window.supabase || !SB_URL || SB_URL.includes("YOUR_") || !SB_KEY || SB_KEY.includes("YOUR_")) {
+    $("gw").textContent = "config.js ناقص";
+    tab = "me";
+    draw();
+    return;
+  }
+  sb = supabase.createClient(SB_URL, SB_KEY);
+  const {data} = await sb.auth.getSession();
+  U = data.session ? data.session.user : null;
+  sb.auth.onAuthStateChange(async (_e, s) => {
+    U = s ? s.user : null;
+    await refreshAll();
+    draw();
+  });
+  await refreshAll();
+  draw();
+}
+
+draw();
+init();
+</script>
+</body>
+</html>
