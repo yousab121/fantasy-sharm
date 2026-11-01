@@ -11,21 +11,17 @@
 | `config.js` | مفاتيحك (مش على Git — اعمله محليًا) |
 | `supabase/schema.sql` | الجداول + RLS + 5 لاعيبة ديمو |
 
-## الحالة الحالية
+## Live
 
+- الموقع: https://acephonics.github.io/fantasy-sharm/
 - GitHub: https://github.com/acephonics/fantasy-sharm
-- Supabase project: `fantasy-sharm` (`pjhbhouykdcprjegdfvf`)
+- Supabase: `fantasy-sharm` (`pjhbhouykdcprjegdfvf`)
 - Schema + RLS + 5 لاعيبة ديمو: شغال
 - Confirm email: مقفول (تسجيل مباشر)
-- `config.js` محلي ومتجاهل من Git
 
-## 1) تشغيل الموقع محليًا
+## 1) تشغيل محلي
 
-افتح الملف:
-
-`C:\Users\RC\OneDrive\Desktop\fantasy-sharm\index.html`
-
-(أو Live Server من VS Code/Cursor)
+افتح `index.html` أو Live Server من Cursor
 
 ## 2) عمل حساب أدمن (مرة واحدة)
 
