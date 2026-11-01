@@ -11,32 +11,35 @@
 | `config.js` | مفاتيحك (مش على Git — اعمله محليًا) |
 | `supabase/schema.sql` | الجداول + RLS + 5 لاعيبة ديمو |
 
-## 1) إنشاء مشروع Supabase
+## الحالة الحالية
 
-1. ادخل [supabase.com](https://supabase.com) → New project
-2. من **SQL Editor** الصق شغّل ملف `supabase/schema.sql` كامل
-3. من **Authentication → Providers** خليه Email مفعّل
-   - للتطوير: Settings → Auth → قفل **"Confirm email"** لو عايز تدخل من غير لينك
-4. من **Project Settings → API** انسخ:
-   - Project URL
-   - `anon` `public` key
+- GitHub: https://github.com/acephonics/fantasy-sharm
+- Supabase project: `fantasy-sharm` (`pjhbhouykdcprjegdfvf`)
+- Schema + RLS + 5 لاعيبة ديمو: شغال
+- Confirm email: مقفول (تسجيل مباشر)
+- `config.js` محلي ومتجاهل من Git
 
-## 2) ربط الموقع
+## 1) تشغيل الموقع محليًا
 
-```bash
-copy config.example.js config.js
+افتح الملف:
+
+`C:\Users\RC\OneDrive\Desktop\fantasy-sharm\index.html`
+
+(أو Live Server من VS Code/Cursor)
+
+## 2) عمل حساب أدمن (مرة واحدة)
+
+1. من التطبيق: **حساب جديد** بإيميلك
+2. تبويب **حسابي** → احفظ اسمك
+3. في Supabase → SQL Editor:
+
+```sql
+update public.players
+set is_admin = true, approved = true
+where user_id = (select id from auth.users where email = 'YOUR_EMAIL@example.com');
 ```
 
-عدّل `config.js`:
-
-```js
-window.SF_CONFIG = {
-  SUPABASE_URL: "https://xxxx.supabase.co",
-  SUPABASE_ANON_KEY: "eyJhbGciOi..."
-};
-```
-
-افتح `index.html` في المتصفح (أو Live Server).
+4. Refresh → هيظهر تبويب **أدمن**
 
 ## 3) عمل حساب أدمن (full access)
 
