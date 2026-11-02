@@ -13,8 +13,8 @@
 
 ## Live
 
-- الموقع: https://acephonics.github.io/fantasy-sharm/
-- GitHub: https://github.com/acephonics/fantasy-sharm
+- الموقع: https://yousab121.github.io/fantasy-sharm/
+- GitHub: https://github.com/yousab121/fantasy-sharm
 - Supabase: `fantasy-sharm` (`pjhbhouykdcprjegdfvf`)
 - Schema + RLS + 5 لاعيبة ديمو: شغال
 - Confirm email: مقفول (تسجيل مباشر)
